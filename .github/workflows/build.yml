@@ -1,0 +1,25 @@
+name: Build PDF
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install make \
+            texlive-latex-base \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-latex-extra
+      - uses: actions/checkout@v4
+      - name: Build PDF
+        run: |
+          make build
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            main.pdf
